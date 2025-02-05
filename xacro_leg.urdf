@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="leg">
+
+    <xacro:macro name="material" params="name r g b a">
+        <material name="${name}">
+            <color rgba="${r} ${g} ${b} ${a}" />
+        </material>
+    </xacro:macro>
+
+    <xacro:material name="green" r="0.5" g="0.5" b="0.5" a="1" />
+    <xacro:material name="grey" r="0" g="0.5" b="0.1" a="1" />
+
+    <xacro:macro name="link_box" params="name size_x size_y size_z xyz rpy material">
+        <link name="${name}">
+            <visual>
+                <geometry>
+                    <box size="${size_x} ${size_y} ${size_z}" />
+                </geometry>
+                <origin xyz="${xyz}" rpy="${rpy}" />
+                <material name="${material}" />
+            </visual>
+        </link>
+    </xacro:macro>
+
+    <xacro:link_box name="pelvic_link" size_x="1.0" size_y="0.3" size_z="0.2" xyz="0.35 -0.15 0" rpy="0 0 0" material="green" />
+    <xacro:link_box name="right_base_link" size_x="0.8" size_y="0.3" size_z="0.2" xyz="0.4 0 0" rpy="0 0 0" material="green" />
+    <xacro:link_box name="base_link" size_x="0.8" size_y="0.3" size_z="0.2" xyz="0.4 0 0" rpy="0 0 0" material="green" />
+    <xacro:link_box name="second_link" size_x="0.8" size_y="0.3" size_z="0.2" xyz="0.4 0 0" rpy="0 0 0" material="green" />
+    <xacro:link_box name="third_link" size_x="0.4" size_y="0.3" size_z="0.1" xyz="0.1 0 -0.05" rpy="0 0 0" material="green" />
+
+    <xacro:macro name="joint" params="name type parent child xyz rpy axis lower upper effort velocity">
+        <joint name="${name}" type="${type}">
+            <parent link="${parent}" />
+            <child link="${child}" />
+            <origin xyz="${xyz}" rpy="${rpy}" />
+            <axis xyz="${axis}" />
+            <limit lower="${lower}" upper="${upper}" effort="${effort}" velocity="${velocity}" />
+        </joint>
+    </xacro:macro>
+
+    <xacro:joint name="empty_right_joint" type="revolute" parent="pelvic_link" child="right_base_link" xyz="0.7 0 0" rpy="0 0 1.57" axis="0 1 0" lower="-0.785" upper="0.785" effort="10" velocity="5" />
+    <xacro:joint name="empty_joint" type="revolute" parent="pelvic_link" child="base_link" xyz="0 0 0" rpy="0 0 1.57" axis="0 1 0" lower="-0.785" upper="0.785" effort="10" velocity="5" />
+    <xacro:joint name="knee_joint" type="revolute" parent="base_link" child="second_link" xyz="0.8 0 0" rpy="0 0.57 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="10" velocity="5" />
+    <xacro:joint name="ankle_joint" type="revolute" parent="second_link" child="third_link" xyz="0.8 0 0" rpy="0 -1.57 0" axis="0 1 0" lower="-1.57" upper="1.57" effort="10" velocity="5" />
+</robot>
